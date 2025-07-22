@@ -3,3 +3,5 @@ pandas
 google-cloud-bigquery
 matplotlib
 altair
+google-auth
+db-dtypes
