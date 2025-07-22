@@ -1,13 +1,21 @@
 import streamlit as st
-from google.cloud import bigquery
 import pandas as pd
 import matplotlib.pyplot as plt
+
+import streamlit as st
+from google.cloud import bigquery
+from google.oauth2 import service_account
+
+# Load credentials securely from Streamlit secrets
+credentials = service_account.Credentials.from_service_account_info(
+    st.secrets["gcp_service_account"]
+)
+
+client = bigquery.Client(credentials=credentials, project=st.secrets["gcp_service_account"]["project_id"])
 
 st.set_page_config(page_title="Live Shopping Predictions", layout="wide")
 st.title("🛍️ Session Conversion Predictions")
 
-# Connect to BigQuery
-client = bigquery.Client()
 # Click-to-Purchase Lag Query
 lag_query = """
 SELECT AVG(click_to_purchase_lag_min) AS avg_lag
