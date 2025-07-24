@@ -66,6 +66,21 @@ def load_predictions():
     """
     return client.query(query).to_dataframe()
 
+@st.cache_data(ttl=600)
+def load_customer_segments():
+    query = """
+    SELECT 
+        viewer_id,
+        recency,
+        frequency,
+        monetary,
+        segment_name
+    FROM `live-shopping-analytics-466418.live_shopping_analytics.customer_segments_named`
+    """
+    return client.query(query).to_dataframe()
+
+segments_df = load_customer_segments()
+
 df = load_predictions()
 viewer_counts = client.query(viewer_count_query).to_dataframe()
 avg_session = client.query(avg_session_query).to_dataframe()
@@ -132,6 +147,8 @@ viewer_counts = viewer_counts.rename(columns={"minute": "Time", "active_viewers"
 viewer_counts = viewer_counts.set_index("Time")
 st.line_chart(viewer_counts)
 
+st.subheader("🧠 Customer Segments")
+st.dataframe(segments_df)
 
 # 📺 Enhancement 3: Average Probability by Stream
 st.subheader("📺 Average Conversion Probability by Stream")
